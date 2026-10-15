@@ -1,0 +1,91 @@
+{
+  "best_model": "ridge",
+  "n_rows": 2800,
+  "n_features": 13,
+  "test_size": 0.2,
+  "cv_folds": 5,
+  "leaderboard": [
+    {
+      "name": "ridge",
+      "cv_r2": 0.8463,
+      "mae": 3.55,
+      "rmse": 4.45,
+      "r2": 0.8582
+    },
+    {
+      "name": "hist_gradient_boosting",
+      "cv_r2": 0.8321,
+      "mae": 3.549,
+      "rmse": 4.41,
+      "r2": 0.8607
+    },
+    {
+      "name": "random_forest",
+      "cv_r2": 0.7696,
+      "mae": 4.364,
+      "rmse": 5.444,
+      "r2": 0.7877
+    }
+  ],
+  "residual_std": 4.445,
+  "feature_importances": [
+    {
+      "feature": "hours_studied",
+      "importance": 0.1576
+    },
+    {
+      "feature": "previous_score",
+      "importance": 0.1024
+    },
+    {
+      "feature": "motivation_level_Low",
+      "importance": 0.0983
+    },
+    {
+      "feature": "parental_involvement_Low",
+      "importance": 0.0918
+    },
+    {
+      "feature": "motivation_level_High",
+      "importance": 0.0777
+    },
+    {
+      "feature": "parental_involvement_High",
+      "importance": 0.0771
+    },
+    {
+      "feature": "tutoring_sessions",
+      "importance": 0.0612
+    },
+    {
+      "feature": "internet_access_Yes",
+      "importance": 0.0582
+    },
+    {
+      "feature": "internet_access_No",
+      "importance": 0.0582
+    },
+    {
+      "feature": "attendance_pct",
+      "importance": 0.0492
+    },
+    {
+      "feature": "assignments_completed_pct",
+      "importance": 0.0262
+    },
+    {
+      "feature": "extracurricular_Yes",
+      "importance": 0.0214
+    }
+  ],
+  "feature_means": {
+    "hours_studied": 13.85,
+    "attendance_pct": 81.63,
+    "previous_score": 68.03,
+    "sleep_hours": 6.98,
+    "tutoring_sessions": 3.54,
+    "physical_activity_days": 3.49,
+    "assignments_completed_pct": 77.46,
+    "commute_minutes": 29.43
+  }
+}

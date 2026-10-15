@@ -1,0 +1,1 @@
+"""ScholarSight FastAPI application."""

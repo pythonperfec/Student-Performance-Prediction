@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Insights · ScholarSight{% endblock %}
+{% block content %}
+<section class="hero compact">
+  <p class="eyebrow">How the model was chosen</p>
+  <h1>Three candidates, one Pipeline, holdout metrics you can defend in an interview.</h1>
+</section>
+
+{% if model_error %}
+<aside class="banner warn">{{ model_error }}</aside>
+{% else %}
+<section class="grid-3">
+  {% for row in metrics.leaderboard %}
+  <article class="panel {{ 'winner' if row.name == metrics.best_model else '' }}">
+    <p class="eyebrow">{{ 'Selected' if row.name == metrics.best_model else 'Candidate' }}</p>
+    <h2>{{ row.name | replace('_', ' ') }}</h2>
+    <dl class="metrics">
+      <div><dt>CV R²</dt><dd>{{ row.cv_r2 }}</dd></div>
+      <div><dt>Holdout R²</dt><dd>{{ row.r2 }}</dd></div>
+      <div><dt>MAE</dt><dd>{{ row.mae }}</dd></div>
+      <div><dt>RMSE</dt><dd>{{ row.rmse }}</dd></div>
+    </dl>
+  </article>
+  {% endfor %}
+</section>
+
+<section class="panel">
+  <header class="panel-head">
+    <h2>Feature influence</h2>
+    <p>Relative importance from the fitted model after ColumnTransformer encoding.</p>
+  </header>
+  <ul class="bars">
+    {% for item in metrics.feature_importances %}
+    <li>
+      <span>{{ item.feature }}</span>
+      <div class="bar"><i style="width: {{ (item.importance * 100 * 2.2) | round(1) }}%"></i></div>
+      <em>{{ item.importance }}</em>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+
+<section class="panel prose">
+  <h2>Working pipeline</h2>
+  <ol>
+    <li><strong>Generate</strong> a reproducible synthetic cohort (<code>python -m src.generate_dataset</code>).</li>
+    <li><strong>Preprocess</strong> with median imputation + scaling for numbers, mode + one-hot for categories.</li>
+    <li><strong>Compare</strong> Ridge, Random Forest, and HistGradientBoosting with 5-fold CV on 80% of rows.</li>
+    <li><strong>Persist</strong> the winning <code>Pipeline</code> with joblib so inference never re-implements encoding.</li>
+    <li><strong>Serve</strong> HTML via Jinja + HTMX and JSON via <code>POST /api/v1/predict</code>.</li>
+  </ol>
+</section>
+{% endif %}
+{% endblock %}

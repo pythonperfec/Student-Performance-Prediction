@@ -1,0 +1,30 @@
+<article class="panel result">
+  <p class="eyebrow">Predicted exam score</p>
+  <div class="score-row">
+    <p class="score">{{ result.predicted_score }}</p>
+    <div>
+      <span class="chip {{ result.band | lower | replace(' ', '-') }}">{{ result.band }}</span>
+      <p class="interval">90% interval {{ result.confidence_interval[0] }} – {{ result.confidence_interval[1] }}</p>
+    </div>
+  </div>
+  <div class="meter" aria-hidden="true">
+    <span style="width: {{ result.predicted_score }}%"></span>
+  </div>
+  <p class="band-copy">{{ result.band_copy }}</p>
+  <p class="model-note">Served by <code>{{ result.model_name }}</code> inside a saved sklearn Pipeline.</p>
+</article>
+
+<article class="panel">
+  <h2>What to change next</h2>
+  <ul class="recs">
+    {% for item in result.recommendations %}
+    <li>
+      <span class="prio {{ item.priority }}">{{ item.priority }}</span>
+      <div>
+        <strong>{{ item.title }}</strong>
+        <p>{{ item.detail }}</p>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+</article>

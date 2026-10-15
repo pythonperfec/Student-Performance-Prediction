@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block title %}Predict · ScholarSight{% endblock %}
+{% block content %}
+<section class="hero">
+  <p class="eyebrow">Resume-ready ML system</p>
+  <h1>See the exam score a student is heading toward — then change the inputs that matter.</h1>
+  <p class="lede">
+    ScholarSight trains a scikit-learn pipeline on academic and lifestyle signals,
+    compares three regressors, and serves the winning model through FastAPI with a
+    server-rendered HTML interface.
+  </p>
+  {% if metrics %}
+  <ul class="stat-row">
+    <li><span>{{ metrics.leaderboard[0].r2 }}</span> Holdout R²</li>
+    <li><span>{{ metrics.leaderboard[0].mae }}</span> MAE (points)</li>
+    <li><span>{{ metrics.n_rows }}</span> Training rows</li>
+    <li><span>{{ metrics.best_model | replace('_', ' ') }}</span> Selected model</li>
+  </ul>
+  {% endif %}
+</section>
+
+{% if model_error %}
+<aside class="banner warn">{{ model_error }}</aside>
+{% endif %}
+
+<section class="grid-2">
+  <form
+    class="panel"
+    hx-post="/predict"
+    hx-target="#result-slot"
+    hx-swap="innerHTML"
+    hx-indicator="#busy"
+  >
+    <header class="panel-head">
+      <h2>Student profile</h2>
+      <p>Enter current habits. The model returns a score, risk band, and next actions.</p>
+    </header>
+
+    <div class="fields">
+      <label>Weekly study hours
+        <input type="number" name="hours_studied" min="0" max="60" step="0.5" value="14" required />
+      </label>
+      <label>Attendance %
+        <input type="number" name="attendance_pct" min="0" max="100" step="0.1" value="86" required />
+      </label>
+      <label>Previous exam score
+        <input type="number" name="previous_score" min="0" max="100" step="0.1" value="72" required />
+      </label>
+      <label>Sleep hours / night
+        <input type="number" name="sleep_hours" min="3" max="12" step="0.1" value="7.2" required />
+      </label>
+      <label>Tutoring sessions / week
+        <input type="number" name="tutoring_sessions" min="0" max="20" value="1" required />
+      </label>
+      <label>Physical activity days
+        <input type="number" name="physical_activity_days" min="0" max="7" value="3" required />
+      </label>
+      <label>Assignments completed %
+        <input type="number" name="assignments_completed_pct" min="0" max="100" step="0.1" value="81" required />
+      </label>
+      <label>Commute minutes
+        <input type="number" name="commute_minutes" min="0" max="180" value="25" required />
+      </label>
+      <label>Parental involvement
+        <select name="parental_involvement">
+          {% for option in choices.parental_involvement %}
+          <option value="{{ option }}" {% if option == 'Medium' %}selected{% endif %}>{{ option }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>Internet access
+        <select name="internet_access">
+          {% for option in choices.internet_access %}
+          <option value="{{ option }}">{{ option }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>Extracurriculars
+        <select name="extracurricular">
+          {% for option in choices.extracurricular %}
+          <option value="{{ option }}">{{ option }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>Motivation
+        <select name="motivation_level">
+          {% for option in choices.motivation_level %}
+          <option value="{{ option }}" {% if option == 'Medium' %}selected{% endif %}>{{ option }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label class="full">Learning style
+        <select name="learning_style">
+          {% for option in choices.learning_style %}
+          <option value="{{ option }}">{{ option }}</option>
+          {% endfor %}
+        </select>
+      </label>
+    </div>
+
+    <button type="submit" {% if model_error %}disabled{% endif %}>Predict exam score</button>
+    <p id="busy" class="htmx-indicator">Scoring profile…</p>
+  </form>
+
+  <div id="result-slot" class="result-col">
+    <article class="panel muted">
+      <h2>Waiting for a profile</h2>
+      <p>Submit the form to see a predicted score, a 90% interval from residual error, and practical recommendations.</p>
+    </article>
+  </div>
+</section>
+{% endblock %}
